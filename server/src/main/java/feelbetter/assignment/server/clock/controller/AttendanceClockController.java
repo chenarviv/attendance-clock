@@ -1,9 +1,10 @@
-package feelbetter.assignment.server.controller;
+package feelbetter.assignment.server.clock.controller;
 
 import feelbetter.assignment.model.MonthReport;
+import feelbetter.assignment.server.clock.service.IAttendanceClockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import feelbetter.assignment.server.service.IAttendanceClockService;
+
 
 @RestController
 @RequestMapping("/clock")

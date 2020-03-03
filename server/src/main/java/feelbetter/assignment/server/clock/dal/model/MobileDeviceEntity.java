@@ -1,4 +1,4 @@
-package feelbetter.assignment.server.dal.model;
+package feelbetter.assignment.server.clock.dal.model;
 
 import javax.persistence.*;
 import java.util.HashSet;

@@ -1,8 +1,9 @@
+/*
 package assignment.devices;
 
-import feelbetter.assignment.server.dal.IFeatureDAL;
-import feelbetter.assignment.server.dal.model.FeatureEntity;
-import feelbetter.assignment.server.dal.model.MobileDeviceEntity;
+import feelbetter.assignment.server.clock.dal.IFeatureDAL;
+import feelbetter.assignment.server.clock.dal.model.FeatureEntity;
+import feelbetter.assignment.server.clock.dal.model.MobileDeviceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,3 +39,4 @@ public class MobileDevicesMapper {
         return mobileDeviceEntities;
     }
 }
+*/

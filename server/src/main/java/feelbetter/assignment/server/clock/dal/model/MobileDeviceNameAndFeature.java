@@ -1,4 +1,4 @@
-package feelbetter.assignment.server.dal.model;
+package feelbetter.assignment.server.clock.dal.model;
 
 public class MobileDeviceNameAndFeature {
     private String name;

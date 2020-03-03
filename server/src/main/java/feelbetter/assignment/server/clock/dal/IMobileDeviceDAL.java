@@ -1,7 +1,7 @@
-package feelbetter.assignment.server.dal;
+package feelbetter.assignment.server.clock.dal;
 
-import feelbetter.assignment.server.dal.model.MobileDeviceEntity;
-import feelbetter.assignment.server.dal.model.MobileDeviceNameAndFeature;
+import feelbetter.assignment.server.clock.dal.model.MobileDeviceEntity;
+import feelbetter.assignment.server.clock.dal.model.MobileDeviceNameAndFeature;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

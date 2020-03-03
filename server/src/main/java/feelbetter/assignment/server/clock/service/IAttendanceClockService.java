@@ -1,4 +1,4 @@
-package feelbetter.assignment.server.service;
+package feelbetter.assignment.server.clock.service;
 
 import feelbetter.assignment.model.MonthReport;
 
