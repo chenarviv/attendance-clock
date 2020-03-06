@@ -1,26 +1,20 @@
 package feelbetter.assignment.model;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MonthReport {
+    private Map<String, List<Report>> report;
 
-    private int month;
-    private List<DayReport> reportList = new ArrayList<>();
-
-    public int getMonth() {
-        return month;
+    public MonthReport(Map<String, List<Report>> report) {
+        this.report = report;
     }
 
-    public void setMonth(int month) {
-        this.month = month;
+    public Map<String, List<Report>> getReport() {
+        return report;
     }
 
-    public List<DayReport> getReportList() {
-        return reportList;
-    }
-
-    public void setReportList(List<DayReport> reportList) {
-        this.reportList = reportList;
+    public void setReport(Map<String, List<Report>> report) {
+        this.report = report;
     }
 }

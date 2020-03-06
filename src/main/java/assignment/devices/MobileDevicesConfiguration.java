@@ -1,3 +1,4 @@
+/*
 package assignment.devices;
 
 
@@ -49,3 +50,4 @@ public class MobileDevicesConfiguration {
     }
 
 }
+*/

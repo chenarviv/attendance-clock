@@ -1,3 +1,4 @@
+/*
 package assignment;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -21,3 +22,4 @@ public class TestConfiguration {
         return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
     }
 }
+*/

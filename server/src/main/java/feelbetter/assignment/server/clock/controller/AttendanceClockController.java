@@ -13,19 +13,13 @@ public class AttendanceClockController {
     @Autowired
     private IAttendanceClockService attendanceClockService;
 
-    @GetMapping("/report")
-    private MonthReport getMonthReport(@RequestParam String userId, @RequestParam int month){
+    @GetMapping("/{userId}/report")
+    private MonthReport getMonthReport(@PathVariable String userId, @RequestParam int month) throws Exception {
         return attendanceClockService.getMonthReport(userId, month);
     }
 
-    @PostMapping("/in")
-    private void checkIn(@RequestParam String userId){
-        attendanceClockService.checkIn(userId);
+    @PutMapping("/{userId}")
+    private void checkInAndOut(@PathVariable String userId){
+        attendanceClockService.checkInAndOut(userId);
     }
-
-    @PostMapping("/out")
-    private void checkOut(@RequestParam String userId){
-        attendanceClockService.checkOut(userId);
-    }
-
 }

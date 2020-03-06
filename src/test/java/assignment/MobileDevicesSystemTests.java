@@ -1,14 +1,15 @@
+/*
 package assignment;
 
-import feelbetter.assignment.server.clock.dal.model.FeatureEntity;
-import feelbetter.assignment.server.clock.dal.model.MobileDeviceEntity;
+import assignment.devices.BaseMobileDevice;
 import assignment.devices.MobileDevicesFactory;
 import assignment.devices.MobileDevicesMapper;
 import assignment.global.exceptions.UnsupportedMobileDeviceException;
 import feelbetter.assignment.server.clock.dal.IFeatureDAL;
 import feelbetter.assignment.server.clock.dal.IMobileDeviceDAL;
+import feelbetter.assignment.server.clock.dal.model.FeatureEntity;
+import feelbetter.assignment.server.clock.dal.model.MobileDeviceEntity;
 import feelbetter.assignment.server.clock.dal.model.MobileDeviceNameAndFeature;
-import assignment.devices.BaseMobileDevice;
 import intango.assignment.devices.*;
 import org.junit.After;
 import org.junit.Assert;
@@ -137,3 +138,4 @@ public class MobileDevicesSystemTests {
     }
 
 }
+*/
