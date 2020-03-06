@@ -45,17 +45,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>-->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.0.3</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
@@ -66,22 +55,6 @@
             <artifactId>embedmongo-spring</artifactId>
             <version>RELEASE</version>
         </dependency>
-        <!--        <dependency>
-                    <groupId>org.springframework.data</groupId>
-                    <artifactId>spring-data-mongodb</artifactId>
-                    <version>2.1.9.RELEASE</version>
-                </dependency>-->
-<!--        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-releasetrain</artifactId>
-            <version>Lovelace-SR9</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>-->
-<!--        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

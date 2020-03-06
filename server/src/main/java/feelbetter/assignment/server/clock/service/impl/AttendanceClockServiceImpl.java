@@ -4,6 +4,7 @@ import feelbetter.assignment.model.MonthReport;
 import feelbetter.assignment.model.Report;
 import feelbetter.assignment.server.clock.dal.IUserMonthReportsDAL;
 import feelbetter.assignment.server.clock.dal.model.UserMonthReport;
+import feelbetter.assignment.server.clock.global.ReportNotExistException;
 import feelbetter.assignment.server.clock.service.IAttendanceClockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,10 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
     private IUserMonthReportsDAL userMonthReportsDAL;
 
     @Override
-    public MonthReport getMonthReport(String userId, int month) throws Exception {
+    public MonthReport getMonthReport(String userId, int month) throws ReportNotExistException {
         UserMonthReport userMonthReport = userMonthReportsDAL.findByUserIdAndMonth(userId, month);
         if (userMonthReport == null) {
-            throw new Exception("Could not find report of month=" + month + " for user id=" + userId);
+            throw new ReportNotExistException("Could not find report of month=" + month + " for user id=" + userId);
         }
         return new MonthReport(userMonthReport.getReport());
     }
