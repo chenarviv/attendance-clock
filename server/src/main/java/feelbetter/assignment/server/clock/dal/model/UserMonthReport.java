@@ -21,6 +21,11 @@ public class UserMonthReport {
     private int month;
     private Map<String, List<Report>> report = new HashMap<>();
 
+    public UserMonthReport(String userId, int month) {
+        this.userId = userId;
+        this.month = month;
+    }
+
     public void addDayReport(String date, List<Report> dayReport) {
         report.put(date, dayReport);
     }

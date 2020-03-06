@@ -42,36 +42,37 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
         String currentTime = LocalTime.now().format(TIME_FORMATTER);
 
         UserMonthReport userMonthReport = userMonthReportsDAL.findByUserIdAndMonth(userId, month);
-        if (userMonthReport == null) { // first time reporting in this month
-            userMonthReport = new UserMonthReport();
-            userMonthReport.setUserId(userId);
-            userMonthReport.setMonth(month);
-            List<Report> dayReport = new ArrayList<>();
-            Report report = new Report();
-            report.setStartTime(currentTime);
-            dayReport.add(report);
+        if (userMonthReport == null) {
+            handleFirstDayReportInMonth(userId, month, today, currentTime);
+        } else {
+            handleDayReportInMonth(today, currentTime, userMonthReport);
+        }
+    }
+
+    private void handleFirstDayReportInMonth(String userId, int month, String today, String currentTime) {
+        UserMonthReport userMonthReport;
+        userMonthReport = new UserMonthReport(userId, month);
+        List<Report> dayReport = new ArrayList<>();
+        dayReport.add(new Report(currentTime));
+        userMonthReport.addDayReport(today, dayReport);
+        userMonthReportsDAL.save(userMonthReport);
+    }
+
+    private void handleDayReportInMonth(String today, String currentTime, UserMonthReport userMonthReport) {
+        List<Report> dayReport = userMonthReport.getReport().get(today);
+        if (dayReport == null) {
+            dayReport = new ArrayList<>();
+            dayReport.add(new Report(currentTime));
             userMonthReport.addDayReport(today, dayReport);
         } else {
-            List<Report> dayReport = userMonthReport.getReport().get(today);
-            if (dayReport == null) {
-                dayReport = new ArrayList<>();
-                Report report = new Report();
-                report.setStartTime(currentTime);
-                dayReport.add(report);
-                userMonthReport.addDayReport(today, dayReport);
+            Report lastReport = dayReport.get(dayReport.size() - 1);
+            if (lastReport.getEndTime() == null) {
+                lastReport.setEndTime(currentTime);
             } else {
-                Report lastReport = dayReport.get(dayReport.size() - 1);
-                if (lastReport.getStartTime() == null) {
-                    lastReport.setStartTime(currentTime);
-                } else if (lastReport.getEndTime() == null) {
-                    lastReport.setEndTime(currentTime);
-                } else {
-                    Report newReport = new Report();
-                    newReport.setStartTime(currentTime);
-                    dayReport.add(newReport);
-                }
+                dayReport.add(new Report(currentTime));
             }
         }
         userMonthReportsDAL.save(userMonthReport);
     }
+
 }
