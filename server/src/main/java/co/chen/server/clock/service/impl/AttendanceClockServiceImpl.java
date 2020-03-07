@@ -1,11 +1,12 @@
-package feelbetter.assignment.server.clock.service.impl;
+package co.chen.server.clock.service.impl;
 
-import feelbetter.assignment.model.MonthReport;
-import feelbetter.assignment.model.Report;
-import feelbetter.assignment.server.clock.dal.IUserMonthReportsDAL;
-import feelbetter.assignment.server.clock.dal.model.UserMonthReport;
-import feelbetter.assignment.server.clock.global.ReportNotExistException;
-import feelbetter.assignment.server.clock.service.IAttendanceClockService;
+import co.chen.model.MonthReport;
+import co.chen.model.Report;
+import co.chen.server.clock.dal.IUserMonthReportsDAL;
+import co.chen.server.clock.dal.model.UserMonthReport;
+import co.chen.server.clock.global.ReportNotExistException;
+import co.chen.server.clock.global.TooManyReportsException;
+import co.chen.server.clock.service.IAttendanceClockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.of("Asia/Jerusalem"));
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy").withZone(ZoneId.of("Asia/Jerusalem"));
+    private static final int MAX_REPORTS_PER_DAY = 5;
 
     @Autowired
     private IUserMonthReportsDAL userMonthReportsDAL;
@@ -36,7 +38,7 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
     }
 
     @Override
-    public void checkInAndOut(String userId) {
+    public void checkInAndOut(String userId) throws TooManyReportsException {
         LocalDateTime now = LocalDateTime.now();
         int month = now.getMonth().getValue();
         String today = LocalDate.now().format(DATE_FORMATTER);
@@ -59,7 +61,7 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
         userMonthReportsDAL.save(userMonthReport);
     }
 
-    private void handleDayReportInMonth(String today, String currentTime, UserMonthReport userMonthReport) {
+    private void handleDayReportInMonth(String today, String currentTime, UserMonthReport userMonthReport) throws TooManyReportsException {
         List<Report> dayReport = userMonthReport.getReport().get(today);
         if (dayReport == null) {
             dayReport = new ArrayList<>();
@@ -70,6 +72,9 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
             if (lastReport.getEndTime() == null) {
                 lastReport.setEndTime(currentTime);
             } else {
+                if (dayReport.size() == MAX_REPORTS_PER_DAY) {
+                    throw new TooManyReportsException("Sorry, you already reported 5 times today");
+                }
                 dayReport.add(new Report(currentTime));
             }
         }

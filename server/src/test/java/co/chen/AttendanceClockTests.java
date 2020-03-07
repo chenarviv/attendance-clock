@@ -1,10 +1,11 @@
-package feelbetter.assignment;
+package co.chen;
 
-import feelbetter.assignment.model.MonthReport;
-import feelbetter.assignment.model.Report;
-import feelbetter.assignment.server.clock.dal.model.UserMonthReport;
-import feelbetter.assignment.server.clock.global.ReportNotExistException;
-import feelbetter.assignment.server.clock.service.IAttendanceClockService;
+import co.chen.model.MonthReport;
+import co.chen.model.Report;
+import co.chen.server.clock.dal.model.UserMonthReport;
+import co.chen.server.clock.global.ReportNotExistException;
+import co.chen.server.clock.global.TooManyReportsException;
+import co.chen.server.clock.service.IAttendanceClockService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,7 +127,7 @@ public class AttendanceClockTests {
 
 
     @Test
-    public void testCheckInAndGetReport() throws ReportNotExistException {
+    public void testCheckInAndGetReport() throws ReportNotExistException, TooManyReportsException {
         attendanceClockService.checkInAndOut(TEST_USER_ID);
         MonthReport monthReport = attendanceClockService.getMonthReport(TEST_USER_ID, LocalDate.now().getMonth().getValue());
         Assert.assertNotNull(monthReport);
@@ -139,7 +140,7 @@ public class AttendanceClockTests {
     }
 
     @Test
-    public void testCheckInAndOutAndGetReport() throws ReportNotExistException {
+    public void testCheckInAndOutAndGetReport() throws ReportNotExistException, TooManyReportsException {
         attendanceClockService.checkInAndOut(TEST_USER_ID);
         attendanceClockService.checkInAndOut(TEST_USER_ID);
         MonthReport monthReport = attendanceClockService.getMonthReport(TEST_USER_ID, LocalDate.now().getMonth().getValue());

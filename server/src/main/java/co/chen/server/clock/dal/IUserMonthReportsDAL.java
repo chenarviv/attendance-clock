@@ -1,6 +1,6 @@
-package feelbetter.assignment.server.clock.dal;
+package co.chen.server.clock.dal;
 
-import feelbetter.assignment.server.clock.dal.model.UserMonthReport;
+import co.chen.server.clock.dal.model.UserMonthReport;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 @org.springframework.stereotype.Repository

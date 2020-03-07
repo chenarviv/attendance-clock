@@ -8,7 +8,7 @@
     <name>Attendance Clock Data Model</name>
     <parent>
         <artifactId>attendance-clock</artifactId>
-        <groupId>feelbetter.assignment</groupId>
+        <groupId>co.chen</groupId>
         <version>1.0.0</version>
     </parent>
 

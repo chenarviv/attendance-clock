@@ -1,4 +1,4 @@
-package feelbetter.assignment.model;
+package co.chen.model;
 
 import lombok.Data;
 

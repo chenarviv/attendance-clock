@@ -1,4 +1,4 @@
-package feelbetter.assignment.server.clock.global;
+package co.chen.server.clock.global;
 
 public class ReportNotExistException extends Throwable{
 

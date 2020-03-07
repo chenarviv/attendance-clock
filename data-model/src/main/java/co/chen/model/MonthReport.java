@@ -1,4 +1,4 @@
-package feelbetter.assignment.model;
+package co.chen.model;
 
 import java.util.List;
 import java.util.Map;

@@ -1,10 +1,9 @@
-package feelbetter.assignment.server.clock.dal.model;
+package co.chen.server.clock.dal.model;
 
-import feelbetter.assignment.model.Report;
+import co.chen.model.Report;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Document("userMonthReports")
+@CompoundIndex(name = "user_month_idx", def = "{'userId' : 1, 'month' : 1}")
 @Data
 public class UserMonthReport {
 
