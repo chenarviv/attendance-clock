@@ -13,7 +13,7 @@
     </parent>
     <dependencies>
         <dependency>
-            <groupId>feelbetter.assignment</groupId>
+            <groupId>co.chen</groupId>
             <artifactId>data-model</artifactId>
         </dependency>
         <dependency>
