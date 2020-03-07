@@ -17,6 +17,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AttendanceClockServiceImpl implements IAttendanceClockService {
@@ -29,20 +30,20 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
     private IUserMonthReportsDAL userMonthReportsDAL;
 
     @Override
-    public MonthReport getMonthReport(String userId, int month) throws ReportNotExistException {
+    public Map<String, List<Report>> getMonthReport(String userId, int month) throws ReportNotExistException {
         UserMonthReport userMonthReport = userMonthReportsDAL.findByUserIdAndMonth(userId, month);
         if (userMonthReport == null) {
             throw new ReportNotExistException("Could not find report of month=" + month + " for user id=" + userId);
         }
-        return new MonthReport(userMonthReport.getReport());
+        return userMonthReport.getReport();
     }
 
     @Override
     public void checkInAndOut(String userId) throws TooManyReportsException {
         LocalDateTime now = LocalDateTime.now();
         int month = now.getMonth().getValue();
-        String today = LocalDate.now().format(DATE_FORMATTER);
-        String currentTime = LocalTime.now().format(TIME_FORMATTER);
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Jerusalem"));
+        LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Jerusalem"));
 
         UserMonthReport userMonthReport = userMonthReportsDAL.findByUserIdAndMonth(userId, month);
         if (userMonthReport == null) {
@@ -52,21 +53,21 @@ public class AttendanceClockServiceImpl implements IAttendanceClockService {
         }
     }
 
-    private void handleFirstDayReportInMonth(String userId, int month, String today, String currentTime) {
+    private void handleFirstDayReportInMonth(String userId, int month, LocalDate today, LocalTime currentTime) {
         UserMonthReport userMonthReport;
         userMonthReport = new UserMonthReport(userId, month);
         List<Report> dayReport = new ArrayList<>();
         dayReport.add(new Report(currentTime));
-        userMonthReport.addDayReport(today, dayReport);
+        userMonthReport.addDayReport(today.format(DATE_FORMATTER), dayReport);
         userMonthReportsDAL.save(userMonthReport);
     }
 
-    private void handleDayReportInMonth(String today, String currentTime, UserMonthReport userMonthReport) throws TooManyReportsException {
-        List<Report> dayReport = userMonthReport.getReport().get(today);
+    private void handleDayReportInMonth(LocalDate today, LocalTime currentTime, UserMonthReport userMonthReport) throws TooManyReportsException {
+        List<Report> dayReport = userMonthReport.getReport().get(today.format(DATE_FORMATTER));
         if (dayReport == null) {
             dayReport = new ArrayList<>();
             dayReport.add(new Report(currentTime));
-            userMonthReport.addDayReport(today, dayReport);
+            userMonthReport.addDayReport(today.format(DATE_FORMATTER), dayReport);
         } else {
             Report lastReport = dayReport.get(dayReport.size() - 1);
             if (lastReport.getEndTime() == null) {

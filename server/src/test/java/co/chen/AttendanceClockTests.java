@@ -1,11 +1,11 @@
 package co.chen;
 
-import co.chen.model.MonthReport;
 import co.chen.model.Report;
 import co.chen.server.clock.dal.model.UserMonthReport;
 import co.chen.server.clock.global.ReportNotExistException;
 import co.chen.server.clock.global.TooManyReportsException;
 import co.chen.server.clock.service.IAttendanceClockService;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -26,6 +27,7 @@ public class AttendanceClockTests {
     private static final String TEST_USER_ID = "12345";
     private static final String TEST_USER_ID2 = "123456";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy").withZone(ZoneId.of("Asia/Jerusalem"));
+    private static final String MONGO_DB_COLLECTION_NAME = "userMonthReports";
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -37,6 +39,12 @@ public class AttendanceClockTests {
     public void populateDb() {
         insertTestUserData();
         insertTestUser2Data();
+    }
+
+    @After
+    public void destroyDb() {
+        mongoTemplate.dropCollection(MONGO_DB_COLLECTION_NAME);
+        mongoTemplate.createCollection(MONGO_DB_COLLECTION_NAME);
     }
 
     private void insertTestUserData() {
@@ -51,8 +59,10 @@ public class AttendanceClockTests {
             List<Report> dayReport1 = new ArrayList<>();
             List<Report> dayReport2 = new ArrayList<>();
             int randomMin = r.nextInt(i);
-            String startTime = i < 10 ? String.format("08:0%d", randomMin) : String.format("08:%d", randomMin);
-            String endTime = i < 10 ? String.format("19:0%d", randomMin) : String.format("19:%d", randomMin);
+            String startTimeString = i < 10 ? String.format("08:0%d", randomMin) : String.format("08:%d", i);
+            String endTimeString = i < 10 ? String.format("19:0%d", randomMin) : String.format("19:%d", i);
+            LocalTime startTime = LocalTime.parse(startTimeString);
+            LocalTime endTime = LocalTime.parse(endTimeString);
             Report report = new Report(startTime);
             report.setEndTime(endTime);
             dayReport1.add(report);
@@ -79,16 +89,20 @@ public class AttendanceClockTests {
             List<Report> dayReport = new ArrayList<>();
             if (i == 10) {
                 for (int j = 8; j < 15; j += 2) {
-                    String startTime = j < 10 ? String.format("0%d:00", j) : String.format("%d:00", j);
-                    String endTime = j < 10 ? String.format("0%d:00", j + 1) : String.format("%d:00", j + 1);
+                    String startTimeString = j < 10 ? String.format("0%d:00", j) : String.format("%d:00", j);
+                    String endTimeString = j < 10 ? String.format("0%d:00", j + 1) : String.format("%d:00", j + 1);
+                    LocalTime startTime = LocalTime.parse(startTimeString);
+                    LocalTime endTime = LocalTime.parse(endTimeString);
                     Report report = new Report(startTime);
                     report.setEndTime(endTime);
                     dayReport.add(report);
                 }
             } else {
                 int randomMin = r.nextInt(i);
-                String startTime = i < 10 ? String.format("08:0%d", randomMin) : String.format("08:%d", randomMin);
-                String endTime = i < 10 ? String.format("19:0%d", randomMin) : String.format("19:%d", randomMin);
+                String startTimeString = i < 10 ? String.format("08:0%d", randomMin) : String.format("08:%d", i);
+                String endTimeString = i < 10 ? String.format("19:0%d", randomMin) : String.format("19:%d", i);
+                LocalTime startTime = LocalTime.parse(startTimeString);
+                LocalTime endTime = LocalTime.parse(endTimeString);
                 Report report = new Report(startTime);
                 report.setEndTime(endTime);
                 dayReport.add(report);
@@ -103,20 +117,17 @@ public class AttendanceClockTests {
 
     @Test
     public void testGetReport() throws ReportNotExistException {
-        MonthReport monthReport1 = attendanceClockService.getMonthReport(TEST_USER_ID, 2);
-        Map<String, List<Report>> daysReports = monthReport1.getReport();
-        Assert.assertEquals(29, daysReports.size());
-        List<Report> dayReport = daysReports.get("04-02-2020");
+        Map<String, List<Report>> monthReport = attendanceClockService.getMonthReport(TEST_USER_ID, 2);
+        Assert.assertEquals(29, monthReport.size());
+        List<Report> dayReport = monthReport.get("04-02-2020");
         Assert.assertEquals(dayReport.size(), 1);
         Report report = dayReport.get(0);
         Assert.assertNotNull(report.getStartTime());
         Assert.assertNotNull(report.getEndTime());
 
-        MonthReport monthReport2 = attendanceClockService.getMonthReport(TEST_USER_ID2, 3);
-        Assert.assertNotNull(monthReport2);
-        Map<String, List<Report>> daysReports2 = monthReport2.getReport();
-        Assert.assertEquals(30, daysReports2.size());
-        List<Report> dayReport2 = daysReports2.get("10-03-2020");
+        Map<String, List<Report>> monthReport2 = attendanceClockService.getMonthReport(TEST_USER_ID2, 3);
+        Assert.assertEquals(30, monthReport2.size());
+        List<Report> dayReport2 = monthReport2.get("10-03-2020");
         Assert.assertEquals(4, dayReport2.size());
     }
 
@@ -126,13 +137,19 @@ public class AttendanceClockTests {
     }
 
 
+    @Test(expected = TooManyReportsException.class)
+    public void testTooManyReports() throws TooManyReportsException {
+        for (int i = 0; i < 12; i++) {
+            attendanceClockService.checkInAndOut(TEST_USER_ID);
+        }
+    }
+
+
     @Test
     public void testCheckInAndGetReport() throws ReportNotExistException, TooManyReportsException {
         attendanceClockService.checkInAndOut(TEST_USER_ID);
-        MonthReport monthReport = attendanceClockService.getMonthReport(TEST_USER_ID, LocalDate.now().getMonth().getValue());
-        Assert.assertNotNull(monthReport);
-        Map<String, List<Report>> daysReports = monthReport.getReport();
-        List<Report> dayReport = daysReports.get(LocalDate.now().format(DATE_FORMATTER));
+        Map<String, List<Report>> monthReport = attendanceClockService.getMonthReport(TEST_USER_ID, LocalDate.now().getMonth().getValue());
+        List<Report> dayReport = monthReport.get(LocalDate.now().format(DATE_FORMATTER));
         Assert.assertEquals(1, dayReport.size());
         Report report = dayReport.get(0);
         Assert.assertNotNull(report.getStartTime());
@@ -143,10 +160,8 @@ public class AttendanceClockTests {
     public void testCheckInAndOutAndGetReport() throws ReportNotExistException, TooManyReportsException {
         attendanceClockService.checkInAndOut(TEST_USER_ID);
         attendanceClockService.checkInAndOut(TEST_USER_ID);
-        MonthReport monthReport = attendanceClockService.getMonthReport(TEST_USER_ID, LocalDate.now().getMonth().getValue());
-        Assert.assertNotNull(monthReport);
-        Map<String, List<Report>> daysReports = monthReport.getReport();
-        List<Report> dayReport = daysReports.get(LocalDate.now().format(DATE_FORMATTER));
+        Map<String, List<Report>> monthReport = attendanceClockService.getMonthReport(TEST_USER_ID, LocalDate.now().getMonth().getValue());
+        List<Report> dayReport = monthReport.get(LocalDate.now().format(DATE_FORMATTER));
         Assert.assertEquals(1, dayReport.size());
         Report report = dayReport.get(0);
         Assert.assertNotNull(report.getStartTime());
